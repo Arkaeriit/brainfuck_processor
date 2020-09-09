@@ -15,13 +15,13 @@ module brainfuckCore_tb1();
 
     brainfuckCore brainfuckCore(clk, reset, code_out, data_in, addr_code, addr_array, data_out, write_rq, probe);
     ramDualAccess ramDualAccess(clk, reset, addr_array, data_out, write_rq, addr_array, data_in);
-    testRom2 testRom2(clk, addr_code[3:0], code_out);
+    testRom1 testRom1(clk, addr_code[3:0], code_out);
 
     initial
         begin
             #10;
             reset = 1;
-            #20;
+            #200;
             $finish;
         end
 
