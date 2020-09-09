@@ -18,7 +18,7 @@ module loader(
     reg newData_ark = 0;
 
     always @ (posedge clk)
-        if(reset)
+        if(!reset)
         begin
             addrOut = 0;
             dataOut = 0;

@@ -3,7 +3,7 @@
 |The program is +[.+]>-[.-]          |
 \-----------------------------------*/
 
-module romTest(
+module testRom1(
     input clk,
     input [3:0] addrIn,
     output dataOut

@@ -8,10 +8,10 @@ module ramDualAccess
     addrSize = 9
     )(
     input clk,
+    input reset,
     input [addrSize-1:0] addr_in,
     input [7:0] dataIn,
     input write_rq,
-    input clear,
     input [addrSize-1:0] addr_out,
     output [7:0] dataOut
     );
@@ -23,7 +23,7 @@ module ramDualAccess
 	reg [7:0] memory_ram_q [size-1:0];
 	
 	always @(posedge clk)
-		if (clear)
+		if(!reset)
 			for (i=0;i<size; i=i+1)
             begin
 				memory_ram_q[i] = 0;
