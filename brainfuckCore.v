@@ -53,6 +53,28 @@ module brainfuckCore #(
                     end
                     else
                         ready = 1;
+                // >
+                8'h3E :
+                    if(ready)
+                    begin
+                        addr_array = addr_array + 1;
+                        writeRq_array = 0;
+                        addr_code = addr_code + 1;
+                        ready = 0;
+                    end
+                    else
+                        ready = 1;
+                // <
+                8'h3C :
+                    if(ready)
+                    begin
+                        addr_array = addr_array - 1;
+                        writeRq_array = 0;
+                        addr_code = addr_code + 1;
+                        ready = 0;
+                    end
+                    else
+                        ready = 1;
                 default : writeRq_array = 0;
             endcase
         end

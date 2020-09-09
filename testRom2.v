@@ -1,6 +1,6 @@
 /*-----------------------------------\
 |A ROM with a small brainfuck program|
-|The program is ++--                 |
+|The program is ++>--                |
 \-----------------------------------*/
 
 module testRom2(
@@ -13,8 +13,9 @@ module testRom2(
         case (addrIn)
             4'h0 : dataOut = 8'h2B;
             4'h1 : dataOut = 8'h2B;
-            4'h2 : dataOut = 8'h2D;
+            4'h2 : dataOut = 8'h3E;
             4'h3 : dataOut = 8'h2D;
+            4'h4 : dataOut = 8'h2D;
             default : dataOut = 8'h00;
         endcase
 

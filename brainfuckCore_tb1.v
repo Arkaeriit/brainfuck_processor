@@ -26,7 +26,7 @@ module brainfuckCore_tb1();
         end
 
     initial
-        $monitor("Clk:%h, reset:%h, data:%h, addr:%h, addr_code:%h, code:%c, probe:%h", clk, reset, data_out, addr_array, addr_code, code_out, probe);
+        $monitor("Clk:%h, reset:%h, data:%h, addr:%h, addr_code:%h, code:%c, probe:%h, write_rq:%h", clk, reset, data_out, addr_array, addr_code, code_out, probe, write_rq);
 
 endmodule
 
