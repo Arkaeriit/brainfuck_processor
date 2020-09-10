@@ -1,5 +1,5 @@
 
-module brainfuckCore_tb1();
+module brainfuckCore_tb2();
     
     reg clk = 0;
     always #1 clk = !clk;
@@ -22,11 +22,14 @@ module brainfuckCore_tb1();
             #10;
             reset = 1;
             #200;
-            $finish;
+            //Uncomment to use with iverilog
+            //$finish;
         end
 
-    initial
+    //Uncomment to use with iverilog
+    /*initial
         $monitor("Clk:%h, reset:%h, data_in:%h, data_out:%h, addr:%h, addr_code:%h, code:%c, probe:%h, write_rq:%h", clk, reset, data_in, data_out, addr_array, addr_code, code_out, probe, write_rq);
+    */
 
 endmodule
 
