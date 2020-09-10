@@ -18,7 +18,8 @@ module brainfuckCore #(
     ,output [3:0] probe
     );
 
-    reg ready = 1;
+    reg [1:0] until_ready = 1;
+    //until_ready is the number of clock cycles until the next instruction is runable
     reg [1:0] browsing = 0;
     //For browsing, 
     // * 0 means usual behaviour,
@@ -30,7 +31,7 @@ module brainfuckCore #(
     always @ (posedge clk)
         if(!reset)
         begin
-            ready = 1;
+            until_ready = 1;
             addr_code = 0;
             addr_array = 0;
             dataOut_array = 0;
@@ -40,142 +41,132 @@ module brainfuckCore #(
         end
         else
         begin
-            case(browsing)
-                2'b00:
-                    case(data_code)
-                        // +
-                        8'h2B : 
-                            if(ready)
-                            begin
-                                dataOut_array = dataIn_array + 1 ;
-                                writeRq_array = 1;
-                                addr_code = addr_code + 1;
-                                ready = 0;
-                            end
-                            else
-                                ready = 1;
-                        // -
-                        8'h2D : 
-                            if(ready)
-                            begin
-                                dataOut_array = dataIn_array - 1;
-                                writeRq_array = 1;
-                                addr_code = addr_code + 1;
-                                ready = 0;
-                            end
-                            else
-                                ready = 1;
-                        // >
-                        8'h3E :
-                            if(ready)
-                            begin
-                                addr_array = addr_array + 1;
-                                writeRq_array = 0;
-                                addr_code = addr_code + 1;
-                                ready = 0;
-                            end
-                            else
-                                ready = 1;
-                        // <
-                        8'h3C :
-                            if(ready)
-                            begin
-                                addr_array = addr_array - 1;
-                                writeRq_array = 0;
-                                addr_code = addr_code + 1;
-                                ready = 0;
-                            end
-                            else
-                                ready = 1;
-                        //[
-                        8'h5B :
-                            if(ready)
-                            begin
-                                if(dataIn_array) //not 0, we keep going
+            if(until_ready)
+                until_ready = until_ready - 1;
+            else
+                case(browsing)
+                    2'b00:
+                        case(data_code)
+                            // +
+                            8'h2B : 
+                                begin
+                                    dataOut_array = dataIn_array + 1 ;
+                                    writeRq_array = 1;
+                                    addr_code = addr_code + 1;
+                                    until_ready = 2;
+                                end
+                            // -
+                            8'h2D : 
+                                begin
+                                    dataOut_array = dataIn_array - 1;
+                                    writeRq_array = 1;
+                                    addr_code = addr_code + 1;
+                                    until_ready = 2;
+                                end
+                            // >
+                            8'h3E :
+                                begin
+                                    addr_array = addr_array + 1;
+                                    writeRq_array = 0;
+                                    addr_code = addr_code + 1;
+                                    until_ready = 2;
+                                end
+                            // <
+                            8'h3C :
+                                begin
+                                    addr_array = addr_array - 1;
+                                    writeRq_array = 0;
+                                    addr_code = addr_code + 1;
+                                    until_ready = 2;
+                                end
+                            //[
+                            8'h5B :
+                                begin
+                                    if(dataOut_array) //not 0, we keep going
+                                    begin
+                                        addr_code = addr_code + 1;
+                                        until_ready = 2;
+                                    end
+                                    else //0, we go to the matching [
+                                    begin
+                                        browsing = 1;
+                                        addr_code = addr_code + 1;
+                                        until_ready = 2;
+                                    end
+                                end
+                            //]
+                            8'h5D :
+                                begin
+                                    if(!dataOut_array) //0, we keep going
+                                    begin
+                                        addr_code = addr_code + 1;
+                                        until_ready = 2;
+                                    end
+                                    else //not 0, we go to the matching [
+                                    begin
+                                        browsing = 2;
+                                        addr_code = addr_code - 1;
+                                        until_ready = 2;
+                                    end
+                                end
+                            
+                            //null byte might means the end of the code, we stop
+                            8'h00 : 
+                                begin
+                                    writeRq_array = 0;
+                                    browsing = 3;
+                                end
+                            //not code, probabely a comment, we pass
+                            default :
                                 begin
                                     addr_code = addr_code + 1;
-                                    ready = 0;
+                                    writeRq_array = 0;
+                                    until_ready = 2;
                                 end
-                                else //0, we go to the matching [
-                                begin
-                                    browsing = 1;
-                                    addr_code = addr_code + 1;
-                                end
-                            end
-                            else
-                                ready = 1;
-                        //]
-                        8'h5D :
-                            if(ready)
-                            begin
-                                if(!dataIn_array) //0, we keep going
-                                begin
-                                    addr_code = addr_code + 1;
-                                    ready = 0;
-                                end
-                                else //not 0, we go to the matching [
-                                begin
-                                    browsing = 2;
-                                    addr_code = addr_code - 1;
-                                end
-                            end
-                            else
-                                ready = 1;
-                        default : 
-                            begin
-                                writeRq_array = 0;
-                                browsing = 3;
-                            end
-                    endcase
-                2'b01 :
-                    if(ready)
-                    begin
-                        ready = 0;
-                        addr_code = addr_code + 1;
-                        if(data_code == 8'h5D)
+                        endcase
+                    2'b01 :
                         begin
-                            if(crossedBrackets)
-                                crossedBrackets = crossedBrackets - 1;
-                            else
+                            until_ready = 2;
+                            addr_code = addr_code + 1;
+                            if(data_code == 8'h5D)
                             begin
-                                browsing = 0;
-                                addr_code = addr_code + 1;
+                                if(crossedBrackets)
+                                    crossedBrackets = crossedBrackets - 1;
+                                else
+                                begin
+                                    browsing = 0;
+                                    addr_code = addr_code + 1;
+                                end
                             end
+                            else if(data_code == 8'h5B)
+                                crossedBrackets = crossedBrackets + 1;
                         end
-                        else if(data_code == 8'h5B)
-                            crossedBrackets = crossedBrackets + 1;
-                    end
-                    else
-                        ready = 1;
-                2'b10 :
-                    if(ready)
-                    begin
-                        ready = 0;
-                        addr_code = addr_code - 1;
-                        if(data_code == 8'h5B)
+                    2'b10 :
                         begin
-                            if(crossedBrackets)
-                                crossedBrackets = crossedBrackets - 1;
-                            else
-                            begin 
-                                browsing = 0;
-                                addr_code = addr_code + 1;
+                            until_ready = -2;
+                            addr_code = addr_code - 1;
+                            if(data_code == 8'h5B)
+                            begin
+                                if(crossedBrackets)
+                                    crossedBrackets = crossedBrackets - 1;
+                                else
+                                begin 
+                                    browsing = 0;
+                                    addr_code = addr_code + 1;
+                                end
                             end
+                            else if(data_code == 8'h5D)
+                                crossedBrackets = crossedBrackets + 1;
                         end
-                        else if(data_code == 8'h5D)
-                            crossedBrackets = crossedBrackets + 1;
-                    end
-                    else
-                        ready = 1;
-                2'b11 : writeRq_array = 0;
-            endcase
+                    2'b11 : writeRq_array = 0;
+                endcase
         end
 
     //Debug
     //assign probe[0] = ready;
     //assign probe[2:1] = browsing;
     //assign probe[3:0] = crossedBrackets[3:0];
-    assign probe[3:0] = {1'b0, 1'b0, browsing};
+    assign probe[3:0] = {1'b0, 1'b0, 1'b0, until_ready == 0};
 
 endmodule
 

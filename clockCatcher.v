@@ -19,13 +19,14 @@ module clockCatcher(
         else
         begin
             if(in_buff)
-                out = 0
+                out = 0;
             else
                 if(in)
                 begin
                     in_buff = 1;
                     out = 1;
                 end
+        end
 
 endmodule        
 

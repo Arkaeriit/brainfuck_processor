@@ -3,7 +3,7 @@
 |format to a ram block                                       |
 \-----------------------------------------------------------*/
 
-module loader(
+module loader #(
     parameter addrSize = 9
     )(
     input clk,
