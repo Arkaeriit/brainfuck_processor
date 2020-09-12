@@ -38,6 +38,7 @@ module loader #(
                 begin
                     newData_ark = 0;
                     addrOut = addrOut + 1;
+                    write_rq = 0;
                 end
         end
 

@@ -1,5 +1,5 @@
 todo:
-    test loader,
+ ** test loader,
     add UART
     make general architecture
     test with real hardware
