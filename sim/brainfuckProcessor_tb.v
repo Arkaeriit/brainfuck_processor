@@ -125,7 +125,7 @@ module brainfuckProcessor_tb();
         #20;
         #200;
         loading = 0;
-        #50000;
+        #150000;
         extReset_proc = 0;
         #20;
         extReset_proc = 1;

@@ -1,7 +1,7 @@
 todo:
  ** test loader,
-    add UART
-    make general architecture
+ ** add UART
+ ** make general architecture
     test with real hardware
     debug
     make smart branching

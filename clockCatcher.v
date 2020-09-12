@@ -20,7 +20,7 @@ module clockCatcher(
             begin
                 high_ark = 0;
                 low_ark = 0;
-                out = 0
+                out = 0;
             end
             else
             begin
