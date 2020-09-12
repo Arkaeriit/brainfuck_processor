@@ -131,6 +131,19 @@ module brainfuckCore #(
                                     sendingChar = 1;
                                     until_ready = 2;
                                 end
+                            // ,
+                            8'h2C :
+                                begin
+                                    if(receivingChar)
+                                    begin
+                                        dataOut_array = receivedChar;
+                                        writeRq_array = 1;
+                                        addr_code = addr_code + 1;
+                                        until_ready = 2;
+                                    end
+                                    else
+                                        writeRq_array = 0;
+                                end
                             //null byte might means the end of the code, we stop
                             8'h00 : 
                                 begin

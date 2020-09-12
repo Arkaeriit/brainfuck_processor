@@ -1,6 +1,6 @@
 /*-----------------------------------\
 |A ROM with a small brainfuck program|
-|The program is +[.+]>-[.-]          |
+|The program is +[.+]>,[.-]          |
 \-----------------------------------*/
 
 module testRom1(
@@ -17,7 +17,7 @@ module testRom1(
             4'h3 : dataOut = 8'h2B;
             4'h4 : dataOut = 8'h5D;
             4'h5 : dataOut = 8'h3E;
-            4'h6 : dataOut = 8'h2D;
+            4'h6 : dataOut = 8'h2C;
             4'h7 : dataOut = 8'h5B;
             4'h8 : dataOut = 8'h2E;
             4'h9 : dataOut = 8'h2D;

@@ -25,7 +25,11 @@ module brainfuckCore_tb1();
         begin
             #10;
             reset = 1;
-            #20;
+            #15000;
+            receivedChar = 8'h20;
+            receivingChar = 1;
+            #100;
+            receivingChar = 0;
             //Uncomment to use with iverilog
             //$finish;
         end
