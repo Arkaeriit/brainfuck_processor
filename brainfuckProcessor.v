@@ -1,7 +1,7 @@
 
 module brainfuckProcessor #(
     parameter addrSize_array = 9,
-    parameter addrSize_code = 9
+    addrSize_code = 9
     )(
     input sysClk,        // main clock
     input extReset_full, // exteral order for a complete reset
@@ -24,7 +24,7 @@ module brainfuckProcessor #(
             else
             begin
                 loading_pulse = 1;
-                loading_ark = 0;
+                loading_ark = 1;
             end
         end
         else
@@ -37,13 +37,21 @@ module brainfuckProcessor #(
     //UART
     wire [7:0] data_tx;
     wire [7:0] data_rx;
-    wire receive_done, start_transmit;
-    uart uart(uartClk, sysReset, rx, tx, data_tx, data_rx, receive_done, start_transmit);    
+    wire [7:0] data_rx_meta;
+    wire receive_done, start_transmit, tx_ready, tx_ready_meta, receive_done_meta, sysReset_meta, start_transmit_meta;
+    uart uart(uartClk, sysReset_meta, rx, tx, data_tx, data_rx_meta, receive_done_meta, start_transmit_meta, tx_ready_meta);
+        
+    //Clock domains linking
+    demetastabilisation demet0(sysClk, receive_done_meta, receive_done);
+    demetastabilisation demet1(sysClk, tx_ready_meta, tx_ready);
+    demetastabilisation_byte deme2(sysClk, data_rx_meta, data_rx);
+    clockCatcher cc1(sysClk, sysReset, uartClk, sysReset_meta);
+    clockCatcher cc2(sysClk, start_transmit, uartClk, start_transmit_meta);
 
     //loader
     wire [7:0] data_loader;
     wire[addrSize_code-1:0] addrCode_loader;
-    wire newData_loader, writeRq_loader;
+    wire writeRq_loader;
     loader #(addrSize_code) loader(sysClk, reset_load, data_rx, receive_done, writeRq_loader, addrCode_loader, data_loader);
 
     //code ROM
@@ -61,7 +69,7 @@ module brainfuckProcessor #(
     //processor core
     wire [7:0] data_tx_proc;
     wire start_transmit_proc;
-    brainfuckCore #(addrSize_array, addrSize_code) brainfuckCore(sysClk, reset_proc, codeOut, addrCode_proc, done, dataIn_proc, addrAray, dataOut_proc, writeRq_proc, receive_done, data_rx, start_transmit_proc, data_tx_proc);
+    brainfuckCore #(addrSize_array, addrSize_code) brainfuckCore(sysClk, reset_proc, codeOut, addrCode_proc, done, dataIn_proc, addrAray, dataOut_proc, writeRq_proc, receive_done, data_rx, start_transmit_proc, data_tx_proc, tx_ready);
 
     //UART wiring
     assign data_tx = (loading ? data_rx : data_tx_proc); //When loading, we want a loop-back

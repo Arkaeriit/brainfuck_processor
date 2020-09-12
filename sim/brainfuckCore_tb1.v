@@ -9,6 +9,7 @@ module brainfuckCore_tb1();
     wire [4:0] addr_code;
     wire write_rq;
     wire done;
+    reg tx_ready = 1;
     wire [7:0] data_in;  // ram  -> core
     wire [7:0] data_out; // core ->  ram
     wire [7:0] code_out; // rom  -> core
@@ -18,7 +19,7 @@ module brainfuckCore_tb1();
     reg [7:0] receivedChar = 0;
     reg receivingChar = 0;
 
-    brainfuckCore #(5, 5) brainfuckCore(clk, reset, code_out, addr_code, data_in, addr_array, done, data_out, write_rq, receivingChar, receivedChar, sendingChar, sendedChar/*, probe*/);
+    brainfuckCore #(5, 5) brainfuckCore(clk, reset, code_out, addr_code, data_in, addr_array, done, data_out, write_rq, receivingChar, receivedChar, sendingChar, sendedChar, tx_ready/*, probe*/);
     ramDualAccess #(5, 8) ramDualAccess(clk, reset, addr_array, data_out, write_rq, addr_array, data_in);
     testRom1 testRom1(clk, addr_code[3:0], code_out);
 

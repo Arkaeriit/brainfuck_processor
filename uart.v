@@ -13,7 +13,8 @@ module uart(
     input [7:0] data_tx,          //Data to be send throught tx
     output reg [7:0] data_rx = 0, //data received on rx
     output receive_done,          //Rise for a clock when a message is recieved
-    input start_transmit          //When set to 1 we transmit the message
+    input start_transmit,         //When set to 1 we transmit the message
+    output tx_ready               //Set to 0 when we are sending a message
     );
 
     //registers to count the number of byte we are at
@@ -24,6 +25,7 @@ module uart(
     reg tx_buzy = 0;
     reg tx_r = 1;
     assign tx = tx_r;
+    assign tx_ready = !tx_buzy;
 
     always @(posedge clk)
         if(!reset)
@@ -66,12 +68,6 @@ module uart(
     reg receive_done_r = 0;
     reg [7:0] data_rx_r = 0;
     assign receive_done = receive_done_r;
-    wire not_reset = !reset;
-    /*always @ (posedge receive_done, negedge not_reset)
-        if(reset)
-            data_rx = 0;
-        else
-            data_rx = data_rx_r;*/
 
     always @ (posedge clk)
         if(!reset)

@@ -22,7 +22,8 @@ module brainfuckCore #(
     input receivingChar,
     input [7:0] receivedChar,
     output reg sendingChar = 0,
-    output reg [7:0] sendedChar = 0
+    output reg [7:0] sendedChar = 0,
+    input tx_ready
     //debug
     //,output [3:0] probe
     );
@@ -127,6 +128,7 @@ module brainfuckCore #(
                                 end
                             // .
                             8'h2E :
+                                if(tx_ready)
                                 begin
                                     addr_code = addr_code + 1;
                                     sendedChar = dataOut_array;
