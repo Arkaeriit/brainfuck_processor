@@ -1,0 +1,16 @@
+todo:
+    test loader,
+    add UART
+    make general architecture
+    test with real hardware
+    debug
+    make smart branching
+
+smart branching:
+    Two arrays are used are ROM. One contains the brainfuck code, 
+    the second contain, at the same adress as a bracket, 
+    the adrres of the matching bracket.
+    Durring loading, each time a [ is encountered, its adress is stored on
+    a stack. When a ] is encountered, the adress at the top of the stack
+    is popped and the second ROM array is filled with correct values.
+
