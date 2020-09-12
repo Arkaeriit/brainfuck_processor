@@ -4,16 +4,17 @@
 \-----------------------------------------------------*/
 
 module brainfuckCore #(
-    parameter addrSize = 9
+    parameter addrSize_array = 9,
+    addrSize_code = 9
     )(
     input clk,
     input reset,
     //code
     input [7:0] data_code,
-    output reg [addrSize-1:0] addr_code = 0,
+    output reg [addrSize_code-1:0] addr_code = 0,
     //array
     input [7:0] dataIn_array,
-    output reg [addrSize-1:0] addr_array = 0,
+    output reg [addrSize_array-1:0] addr_array = 0,
     output reg [7:0] dataOut_array = 0,
     output reg writeRq_array = 0,
     //parallel interface for . and ,
@@ -33,7 +34,7 @@ module brainfuckCore #(
     // * 1 means browsing the code left to right between [ and ]
     // * 2 means browsing the code right to left between ] and [
     // * 3 means that we reached a non usual code char, the end of the code
-    reg [addrSize-1:0] crossedBrackets = 0; //Number of brackets we crossed while browsing
+    reg [$clog2(addrSize_code)+1:0] crossedBrackets = 0; //Number of brackets we crossed while browsing
 
     always @ (posedge clk)
         if(!reset)

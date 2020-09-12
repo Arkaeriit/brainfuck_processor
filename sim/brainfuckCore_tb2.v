@@ -17,8 +17,8 @@ module brainfuckCore_tb2();
     reg [7:0] receivedChar = 0;
     reg receivingChar = 0;
 
-    brainfuckCore brainfuckCore(clk, reset, code_out, addr_code, data_in, addr_array, dataOut_array, write_rq, receivingChar, receivedChar, sendingChar, sendedChar, probe);
-    ramDualAccess ramDualAccess(clk, reset, addr_array, data_out, write_rq, addr_array, data_in);
+    brainfuckCore #(5, 5) brainfuckCore(clk, reset, code_out, addr_code, data_in, addr_array, dataOut_array, write_rq, receivingChar, receivedChar, sendingChar, sendedChar, probe);
+    ramDualAccess #(5, 8) ramDualAccess(clk, reset, addr_array, data_out, write_rq, addr_array, data_in);
     testRom2 testRom2(clk, addr_code[3:0], code_out);
 
     initial

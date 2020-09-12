@@ -4,7 +4,8 @@
 \--------------------------------------*/
 
 module stack(
-    parameter addrSize = 9
+    parameter addrSize = 9,
+    contentSize = 8
     )(
     input clk,
     input reset,
@@ -31,7 +32,7 @@ module stack(
                 addrIn = addrIn + 1;
         end
 
-    ramDualAccess #(2**addrSize, addrSize) ram(clk, reset, dataIn, write_rq, addrOut, dataOut);
+    ramDualAccess #(addrSize, contentSize) ram(clk, reset, dataIn, write_rq, addrOut, dataOut);
 
 endmodule
 

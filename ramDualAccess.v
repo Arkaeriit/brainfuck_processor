@@ -4,34 +4,34 @@
 \-------------------------------------*/
 
 module ramDualAccess
-    #(parameter size = 512,
-    addrSize = 9
+    #(parameter addrSize = 9,
+    contentSize = 8
     )(
     input clk,
     input reset,
     input [addrSize-1:0] addr_in,
-    input [7:0] dataIn,
+    input [contentSize-1:0] dataIn,
     input write_rq,
     input [addrSize-1:0] addr_out,
-    output [7:0] dataOut
+    output [contentSize-1:0] dataOut
     );
     
 	integer i;
 
 	// Declare memory 
-	reg [7:0] memory_ram_d [size-1:0];
-	reg [7:0] memory_ram_q [size-1:0];
+	reg [7:0] memory_ram_d [(2**addrSize)-1:0];
+	reg [7:0] memory_ram_q [(2**addrSize)-1:0];
 	
 	always @(posedge clk)
 		if(!reset)
-			for (i=0;i<size; i=i+1)
+			for (i=0;i<(2**addrSize); i=i+1)
             begin
 				memory_ram_q[i] = 0;
 				memory_ram_d[i] = 0;
             end
 		else
         begin
-			for (i=0;i<size; i=i+1)
+			for (i=0;i<(2**addrSize); i=i+1)
 				 memory_ram_q[i] = memory_ram_d[i];
             if (write_rq)
                 memory_ram_d[addr_in] = dataIn;
@@ -40,5 +40,4 @@ module ramDualAccess
    assign dataOut = memory_ram_q[addr_out];
 
 endmodule
-
 
