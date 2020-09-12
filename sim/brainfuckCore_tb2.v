@@ -12,10 +12,14 @@ module brainfuckCore_tb2();
     wire [7:0] data_out;
     wire [7:0] code_out;
     wire [3:0] probe;
+    wire [7:0] sendedChar;
+    wire sendingChar;
+    reg [7:0] receivedChar = 0;
+    reg receivingChar = 0;
 
-    brainfuckCore brainfuckCore(clk, reset, code_out, data_in, addr_code, addr_array, data_out, write_rq, probe);
+    brainfuckCore brainfuckCore(clk, reset, code_out, addr_code, data_in, addr_array, dataOut_array, write_rq, receivingChar, receivedChar, sendingChar, sendedChar, probe);
     ramDualAccess ramDualAccess(clk, reset, addr_array, data_out, write_rq, addr_array, data_in);
-    testRom1 testRom1(clk, addr_code[3:0], code_out);
+    testRom2 testRom2(clk, addr_code[3:0], code_out);
 
     initial
         begin

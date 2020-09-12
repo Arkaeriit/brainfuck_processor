@@ -8,12 +8,19 @@ module brainfuckCore #(
     )(
     input clk,
     input reset,
+    //code
     input [7:0] data_code,
-    input [7:0] dataIn_array,
     output reg [addrSize-1:0] addr_code = 0,
+    //array
+    input [7:0] dataIn_array,
     output reg [addrSize-1:0] addr_array = 0,
     output reg [7:0] dataOut_array = 0,
-    output reg writeRq_array = 0
+    output reg writeRq_array = 0,
+    //parallel interface for . and ,
+    input receivingChar,
+    input [7:0] receivedChar,
+    output reg sendingChar = 0,
+    output reg [7:0] sendedChar = 0
     //debug
     ,output [3:0] probe
     );
@@ -38,11 +45,18 @@ module brainfuckCore #(
             writeRq_array = 0;
             browsing = 0;
             crossedBrackets = 0;
+            sendedChar = 0;
+            sendingChar = 0;
         end
         else
         begin
             if(until_ready)
+            begin
                 until_ready = until_ready - 1;
+                sendingChar = 0;
+                if(!writeRq_array) //loading from the array
+                    dataOut_array = dataIn_array;
+            end
             else
                 case(browsing)
                     2'b00:
@@ -50,7 +64,7 @@ module brainfuckCore #(
                             // +
                             8'h2B : 
                                 begin
-                                    dataOut_array = dataIn_array + 1 ;
+                                    dataOut_array = dataOut_array + 1 ;
                                     writeRq_array = 1;
                                     addr_code = addr_code + 1;
                                     until_ready = 2;
@@ -58,7 +72,7 @@ module brainfuckCore #(
                             // -
                             8'h2D : 
                                 begin
-                                    dataOut_array = dataIn_array - 1;
+                                    dataOut_array = dataOut_array - 1;
                                     writeRq_array = 1;
                                     addr_code = addr_code + 1;
                                     until_ready = 2;
@@ -109,7 +123,14 @@ module brainfuckCore #(
                                         until_ready = 2;
                                     end
                                 end
-                            
+                            // .
+                            8'h2E :
+                                begin
+                                    addr_code = addr_code + 1;
+                                    sendedChar = dataOut_array;
+                                    sendingChar = 1;
+                                    until_ready = 2;
+                                end
                             //null byte might means the end of the code, we stop
                             8'h00 : 
                                 begin
