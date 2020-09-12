@@ -9,7 +9,8 @@ module brainfuckProcessor #(
     input uartClk,       // clock for the uart module
     input loading,       // are we running the code or loading it
     input rx,            // uart input
-    output tx            // uart output
+    output tx,           // uart output
+    output done          // tell if the end of the code is reached
     );
 
     // When we are activating the loading input we want a full reset
@@ -60,7 +61,7 @@ module brainfuckProcessor #(
     //processor core
     wire [7:0] data_tx_proc;
     wire start_transmit_proc;
-    brainfuckCore #(addrSize_array, addrSize_code) brainfuckCore(sysClk, reset_proc, codeOut, addrCode_proc, dataIn_proc, addrAray, dataOut_proc, writeRq_proc, receive_done, data_rx, start_transmit_proc, data_tx_proc);
+    brainfuckCore #(addrSize_array, addrSize_code) brainfuckCore(sysClk, reset_proc, codeOut, addrCode_proc, done, dataIn_proc, addrAray, dataOut_proc, writeRq_proc, receive_done, data_rx, start_transmit_proc, data_tx_proc);
 
     //UART wiring
     assign data_tx = (loading ? data_rx : data_tx_proc); //When loading, we want a loop-back

@@ -12,6 +12,7 @@ module brainfuckCore #(
     //code
     input [7:0] data_code,
     output reg [addrSize_code-1:0] addr_code = 0,
+    output done, //turned to 1 when reached a null byte in the code
     //array
     input [7:0] dataIn_array,
     output reg [addrSize_array-1:0] addr_array = 0,
@@ -196,6 +197,8 @@ module brainfuckCore #(
                     2'b11 : writeRq_array = 0;
                 endcase
         end
+
+    assign done = browsing == 2'b11;
 
     //Debug
     //assign probe[0] = ready;
