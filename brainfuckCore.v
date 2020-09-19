@@ -133,7 +133,7 @@ module brainfuckCore #(
                                     addr_code = addr_code + 1;
                                     sendedChar = dataOut_array;
                                     sendingChar = 1;
-                                    until_ready = 2;
+                                    until_ready = 24; //We wit a lot in order not to skip close .
                                 end
                             // ,
                             8'h2C :
