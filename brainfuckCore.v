@@ -28,7 +28,7 @@ module brainfuckCore #(
     //,output [3:0] probe
     );
 
-    reg [1:0] until_ready = 1;
+    reg [5:0] until_ready = 1;
     //until_ready is the number of clock cycles until the next instruction is runable
     reg [1:0] browsing = 0;
     //For browsing, 
@@ -96,7 +96,7 @@ module brainfuckCore #(
                                     addr_code = addr_code + 1;
                                     until_ready = 2;
                                 end
-                            //[
+                            // [
                             8'h5B :
                                 begin
                                     if(dataOut_array) //not 0, we keep going
@@ -111,7 +111,7 @@ module brainfuckCore #(
                                         until_ready = 2;
                                     end
                                 end
-                            //]
+                            // ]
                             8'h5D :
                                 begin
                                     if(!dataOut_array) //0, we keep going
@@ -143,7 +143,7 @@ module brainfuckCore #(
                                         dataOut_array = receivedChar;
                                         writeRq_array = 1;
                                         addr_code = addr_code + 1;
-                                        until_ready = 2;
+                                        until_ready = 24; //A long signal in order not to mix up multiple commas next to one another
                                     end
                                     else
                                         writeRq_array = 0;

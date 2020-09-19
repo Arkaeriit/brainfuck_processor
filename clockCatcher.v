@@ -7,7 +7,7 @@ module clockCatcher(
     input clk,
     input in,
     input slowClk,
-    output reg out
+    output reg out = 0
     );
 
     reg low_ark = 0;

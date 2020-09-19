@@ -13,8 +13,9 @@ module brainfuckProcessor_tb();
     reg rx = 1;
     wire tx;
     wire done;
+    wire [3:0] addrOut;
 
-    brainfuckProcessor #(3, 4) brainfuckProcessor (sysClk, extReset_full, extReset_proc, uartClk, loading, rx, tx, done);
+    brainfuckProcessor #(3, 4) brainfuckProcessor (sysClk, extReset_full, extReset_proc, uartClk, loading, rx, tx, done, addrOut);
     
     initial
     begin
@@ -43,7 +44,7 @@ module brainfuckProcessor_tb();
         #20;
         rx = 1;
         #20;
-        rx = 0; //sending 01011011 which is +
+        rx = 0; //sending 01011011 which is [
         #20;
         rx = 1;
         #20;
@@ -63,7 +64,7 @@ module brainfuckProcessor_tb();
         #20;
         rx = 1;
         #20;
-        rx = 0; //sending 00101110 which is +
+        rx = 0; //sending 00101110 which is .
         #20;
         rx = 0;
         #20;
@@ -103,7 +104,7 @@ module brainfuckProcessor_tb();
         #20;
         rx = 1;
         #20;
-        rx = 0; //sending 01011101 which is +
+        rx = 0; //sending 01011101 which is ]
         #20;
         rx = 1;
         #20;

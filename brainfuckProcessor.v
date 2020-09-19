@@ -10,12 +10,14 @@ module brainfuckProcessor #(
     input loading,       // are we running the code or loading it
     input rx,            // uart input
     output tx,           // uart output
-    output done          // tell if the end of the code is reached
+    output done,         // tell if the end of the code is reached
+    output [3:0] addrOut // tell the current code address
     );
 
     // When we are activating the loading input we want a full reset
     reg loading_ark = 0;
     reg loading_pulse = 0;
+    wire loading_long;
     always @ (posedge sysClk)
         if(loading)
         begin
@@ -29,8 +31,9 @@ module brainfuckProcessor #(
         end
         else
             loading_ark = 0;
-
-    wire sysReset = extReset_full & !loading_pulse;
+    
+    clockCatcher cc0(sysClk, loading_pulse, uartClk, loading_long);
+    wire sysReset = extReset_full & !loading_long;
     wire reset_proc = sysReset & !loading & extReset_proc;
     wire reset_load = sysReset & loading;
 
@@ -74,6 +77,9 @@ module brainfuckProcessor #(
     //UART wiring
     assign data_tx = (loading ? data_rx : data_tx_proc); //When loading, we want a loop-back
     assign start_transmit = (loading ? receive_done : start_transmit_proc);
+
+    //probing
+    assign addrOut = addrCode_proc[3:0];
 
 endmodule
 
