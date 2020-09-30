@@ -6,7 +6,7 @@ module brainfuckProcessor #(
     input sysClk,        // main clock
     input extReset_full, // exteral order for a complete reset
     input extReset_proc, // external order for a reset of the processing part
-    input uartClk,       // clock for the uart module
+    input uartEn,        // 1 MHz enable signal for the UART
     input loading,       // are we running the code or loading it
     input rx,            // uart input
     output tx,           // uart output
@@ -17,7 +17,6 @@ module brainfuckProcessor #(
     // When we are activating the loading input we want a full reset
     reg loading_ark = 0;
     reg loading_pulse = 0;
-    wire loading_long;
     always @ (posedge sysClk)
         if(loading)
         begin
@@ -32,24 +31,18 @@ module brainfuckProcessor #(
         else
             loading_ark = 0;
     
-    clockCatcher cc0(sysClk, loading_pulse, uartClk, loading_long);
-    wire sysReset = extReset_full & !loading_long;
+    wire sysReset = extReset_full & !loading_pulse;
     wire reset_proc = sysReset & !loading & extReset_proc;
     wire reset_load = sysReset & loading;
 
     //UART
     wire [7:0] data_tx;
     wire [7:0] data_rx;
-    wire [7:0] data_rx_meta;
-    wire receive_done, start_transmit, tx_ready, tx_ready_meta, receive_done_meta, sysReset_meta, start_transmit_meta;
-    uart uart(uartClk, sysReset_meta, rx, tx, data_tx, data_rx_meta, receive_done_meta, start_transmit_meta, tx_ready_meta);
+    wire receive_done, start_transmit, tx_ready, start_transmit_meta;
+    uart uart(sysClk, uartEn, sysReset, rx, tx, data_tx, data_rx, receive_done, start_transmit_meta, tx_ready);
         
     //Clock domains linking
-    demetastabilisation demet0(sysClk, receive_done_meta, receive_done);
-    demetastabilisation demet1(sysClk, tx_ready_meta, tx_ready);
-    demetastabilisation_byte deme2(sysClk, data_rx_meta, data_rx);
-    clockCatcher cc1(sysClk, sysReset, uartClk, sysReset_meta);
-    clockCatcher cc2(sysClk, start_transmit, uartClk, start_transmit_meta);
+    clockCatcher cc(sysClk, start_transmit, uartEn, start_transmit_meta);
 
     //loader
     wire [7:0] data_loader;

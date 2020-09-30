@@ -12,19 +12,27 @@ module brainfuckProcessor_overseer(
     input rx,
     output tx);
 
-    wire CLK1MHZ;
-    clockDiviser #(12) cd(CLK12MHZ, CLK1MHZ);
+    wire uartEn;
+    counter #(12) cnt(CLK12MHZ, 1'b1, 1'b1, uartEn);
     wire done;
-    wire loading = sw; //The loading is controled by the sliding switch
+    
+    //demetastabilisation
+    wire loading; //The loading is controled by the sliding switch
+    demetastabilisation demet0(CLK12MHZ, sw, loading);
+    wire mainReset, coreReset;
+    demetastabilisation demet1(CLK12MHZ, !btn[1], mainReset); //The btn[1] is the main reset
+    demetastabilisation demet2(CLK12MHZ, !btn[0], coreReset); //The btn[0] is the core and RAM reset
+    wire rx_demet;
+    demetastabilisation demet3(CLK12MHZ, rx, rx_demet);
 
     brainfuckProcessor #(10, 9) brainfuckProcessor( // 1 KiB de RAM et 512 B de code
     //brainfuckProcessor #(11, 10) brainfuckProcessor( // 2 KiB de RAM et 1 KiB de code
-        CLK12MHZ, //Main clock at 12 MHz
-        !btn[1],   //The btn[1] is the main reset
-        !btn[0],   //The btn[0] is the core and RAM reset
-        CLK1MHZ,  //The UART is at 1 MHz
+        CLK12MHZ,  //Main clock at 12 MHz
+        mainReset,   
+        coreReset,   
+        uartEn,    //The UART is at 1 MHz
         loading,
-        rx,
+        rx_demet,
         tx,
         done,
         led

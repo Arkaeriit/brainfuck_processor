@@ -7,6 +7,7 @@
 
 module uart(
     input clk,
+    input enable,                 //Should have a one tick pulse at the same frequency as the UART
     input reset,
     input rx,
     output tx,
@@ -34,7 +35,8 @@ module uart(
             tx_buzy = 0;
             tx_r = 1;
         end
-        else
+        else if(enable)
+        begin
             if(tx_buzy)
             begin
                 if(tx_count == 0) //start bit
@@ -59,6 +61,7 @@ module uart(
                     tx_buzy = 1;
                 else //rest value : 1
                     tx_r = 1;
+        end
     
     //assign transmit_free = !tx_buzy //We could do this if we needed to check
     //if the transmission is possible
@@ -78,7 +81,8 @@ module uart(
             receive_done_r = 0;
             data_rx = 0;
         end
-        else
+        else if(enable)
+        begin
             if(rx_buzy)
             begin
                 if(rx_count < 8) //receiving the 8 bits
@@ -100,6 +104,7 @@ module uart(
                     rx_count = 0;
                     rx_buzy = 1;
                 end
+        end
     
 endmodule
 
