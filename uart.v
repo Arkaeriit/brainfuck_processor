@@ -39,12 +39,7 @@ module uart(
         begin
             if(tx_buzy)
             begin
-                if(tx_count == 0) //start bit
-                begin
-                    tx_r = 0;
-                    tx_count = tx_count + 1;
-                end
-                else if(tx_count > 8) //end bit
+                if(tx_count > 7) //end bit
                 begin
                     tx_r = 1;
                     tx_count = 0;
@@ -52,13 +47,16 @@ module uart(
                 end    
                 else //data bits
                 begin
-                    tx_r = data_tx[tx_count - 1];
+                    tx_r = data_tx[tx_count];
                     tx_count = tx_count + 1;
                 end
             end
             else 
                 if(start_transmit)
+                begin
                     tx_buzy = 1;
+                    tx_r = 0; //start bit
+                end
                 else //rest value : 1
                     tx_r = 1;
         end
