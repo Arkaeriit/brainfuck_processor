@@ -181,7 +181,7 @@ module brainfuckCore #(
                         end
                     2'b10 :
                         begin
-                            until_ready = -2;
+                            until_ready = 2;
                             addr_code = addr_code - 1;
                             if(data_code == 8'h5B)
                             begin
