@@ -25,7 +25,8 @@ module brainfuckProcessor_overseer(
     wire rx_demet;
     demetastabilisation demet3(CLK12MHZ, rx, rx_demet);
 
-    brainfuckProcessor #(10, 9) brainfuckProcessor( // 1 KiB de RAM et 512 B de code
+    brainfuckProcessor #(9, 8) brainfuckProcessor( // 512 B de RAM et 256 B de code
+    //brainfuckProcessor #(10, 9) brainfuckProcessor( // 1 KiB de RAM et 512 B de code
     //brainfuckProcessor #(11, 10) brainfuckProcessor( // 2 KiB de RAM et 1 KiB de code
         CLK12MHZ,  //Main clock at 12 MHz
         mainReset,   

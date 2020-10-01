@@ -22,7 +22,7 @@ module counter #(
             counter = 0;
             out = 0;    
         end
-        else
+        else if(enable)
         begin
             if(counter == max - 1)
             begin
